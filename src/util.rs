@@ -64,6 +64,36 @@ pub fn copy_dir(src: &Path, dst: &Path) -> Result<()> {
     Ok(())
 }
 
+/// Pack a directory bundle into .tar.zst and remove the directory
+pub fn pack_bundle(dir: &Path) -> Result<std::path::PathBuf> {
+    let bundle_path = dir.with_extension("tar.zst");
+    let file = std::fs::File::create(&bundle_path)?;
+    let enc = zstd::Encoder::new(file, 3)?;
+    let mut archive = tar::Builder::new(enc);
+    for entry in walkdir::WalkDir::new(dir) {
+        let e = entry?;
+        let relative = e.path().strip_prefix(dir)?;
+        if e.file_type().is_file() || e.file_type().is_symlink() {
+            if let Ok(mut f) = std::fs::File::open(e.path()) {
+                let _ = archive.append_file(relative, &mut f);
+            }
+        }
+    }
+    let _ = archive.finish()?;
+    std::fs::remove_dir_all(dir)?;
+    Ok(bundle_path)
+}
+
+/// Unpack a .tar.zst bundle to a directory
+pub fn unpack_bundle(archive_path: &Path, dest: &Path) -> Result<()> {
+    std::fs::create_dir_all(dest)?;
+    let file = std::fs::File::open(archive_path)?;
+    let dec = zstd::Decoder::new(file)?;
+    let mut archive = tar::Archive::new(dec);
+    archive.unpack(dest)?;
+    Ok(())
+}
+
 /// Rebuild initramfs based on detected distro
 pub fn rebuild_initramfs(dry_run: bool) -> Result<()> {
     let pm = crate::packages::pm_detect::detect()?;

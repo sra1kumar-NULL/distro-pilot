@@ -11,8 +11,6 @@ toml = "0.8"
 tar = "0.4"
 zstd = { version = "0.13", features = ["legacy"] }
 anyhow = "1"
-thiserror = "1"
 chrono = { version = "0.4", features = ["serde"] }
-indicatif = "0.17"
 dirs = "5"
 walkdir = "2"

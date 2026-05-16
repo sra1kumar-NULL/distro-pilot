@@ -1,6 +1,8 @@
 pub mod pm_detect;
 pub mod pacman;
 pub mod apt;
+pub mod rpm;
+pub mod flatpak;
 pub mod mapping;
 
 use serde::{Deserialize, Serialize};
@@ -25,13 +27,16 @@ pub struct PackageEntry {
 pub fn scan_all() -> Result<Vec<PackageEntry>> {
     let pm = pm_detect::detect()?;
 
-    let pkgs = match pm.as_str() {
+    let mut pkgs = match pm.as_str() {
         "pacman" => pacman::list_explicit()?,
         "apt" => apt::list_manual()?,
-        "dnf" => Vec::new(),
-        "zypper" => Vec::new(),
+        "dnf" | "zypper" => rpm::list_all()?,
         _ => anyhow::bail!("Unsupported package manager: {}", pm),
     };
+
+    if let Ok(flatpak_pkgs) = flatpak::list_apps() {
+        pkgs.extend(flatpak_pkgs);
+    }
 
     Ok(pkgs)
 }

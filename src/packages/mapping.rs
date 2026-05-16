@@ -89,6 +89,19 @@ pub fn lookup(app_name: &str, from: &str, to: &str) -> Result<MappingResult> {
 pub fn map_all(pkgs: &[PackageEntry], from: &str, to: &str) -> Result<Vec<MappingResult>> {
     let mut results = Vec::new();
     for pkg in pkgs {
+        if pkg.pm == "flatpak" {
+            // Flatpak entries are already the canonical install ID; pass through directly
+            results.push(MappingResult {
+                app_name: pkg.app_name.clone(),
+                source: format!("flatpak:{}", pkg.native_name),
+                target: vec![TargetPackage {
+                    pm: "flatpak".to_string(),
+                    name: pkg.native_name.clone(),
+                    priority: 10,
+                }],
+            });
+            continue;
+        }
         match lookup(&pkg.app_name, from, to) {
             Ok(r) => results.push(r),
             Err(e) => eprintln!("  ⚠  {} — skipping", e),

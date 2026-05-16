@@ -53,8 +53,14 @@ Binary at `./target/release/distropilot` (~3.2MB, statically linked).
 
 ### Step 1: Save your working system
 
+Make sure you're in the project directory and use the full path to the binary (or install it to your PATH first):
+
 ```bash
-# On CachyOS/Arch/whatever works:
+# Run from the project directory:
+./target/release/distropilot save /mnt/usb/my-bundle
+
+# Or install to PATH once so you can run 'distropilot' from anywhere:
+sudo cp ./target/release/distropilot /usr/local/bin/
 distropilot save /mnt/usb/my-bundle
 ```
 
@@ -71,9 +77,16 @@ my-bundle/
 ├── firmware/manifest             # linux-firmware version info
 ├── dotfiles/                     # ~/.config/ + home dotfiles
 │   ├── config.tar.zst            #   (zstd-compressed tar)
-│   └── home.tar.zst
+│   ├── home.tar.zst
+│   ├── mozilla.tar.zst           # Firefox profiles (if present)
+│   └── ssh.tar.zst               # SSH keys (--include-ssh only)
 ├── systemd/                      # enabled system + user services
 └── hardware/                     # lspci, lsusb, sensors, dmidecode
+```
+
+Save as a single compressed file (for USB/external drive):
+```bash
+distropilot save --bundle /mnt/usb/my-bundle.tar.zst
 ```
 
 Preview without writing:
@@ -116,7 +129,9 @@ distropilot apply --step dotfiles /mnt/usb/my-bundle
 |---------|-------------|
 | `save <path>` | Snapshot current system to a bundle directory |
 | `save --dry-run <path>` | Preview what would be saved |
-| `apply <path>` | Restore bundle onto current system |
+| `save --include-ssh <path>` | Include SSH keys (⚠️ SECURITY: copies private keys to the bundle) |
+| `save --bundle <path>` | Pack output as single `.tar.zst` file (removes directory) |
+| `apply <path>` | Restore bundle onto current system (accepts directory or `.tar.zst` file) |
 | `apply --dry-run <path>` | Preview changes without making any |
 | `apply --step <name> <path>` | Run only one step (packages, drivers, dotfiles, firmware, power, systemd) |
 | `apply --no-validate <path>` | Skip post-apply validation |
@@ -141,14 +156,17 @@ distropilot apply --step dotfiles /mnt/usb/my-bundle
 
 ## Supported Distros
 
-| Family | Package Manager | Capture | Apply |
-|--------|----------------|---------|-------|
-| Arch / CachyOS / EndeavourOS / Manjaro | pacman | ✅ | ✅ |
-| Debian / Ubuntu / Mint / Pop!_OS | apt | ✅ | ✅ |
-| Fedora / RHEL / CentOS | dnf | ❌ scan | ✅ install |
-| openSUSE | zypper | ❌ scan | ✅ install |
+| Family | Capture | Apply | Examples |
+|--------|---------|-------|----------|
+| **Arch** | `pacman -Qq --explicit` | `pacman -S` | Arch, CachyOS, EndeavourOS, Manjaro |
+| **Debian** | `apt-mark showmanual` | `apt install` | Debian, Ubuntu, Mint, Pop!_OS, Kali |
+| **Fedora / RHEL** | `rpm -qa` | `dnf install` | Fedora, RHEL, CentOS, Rocky, Alma |
+| **openSUSE** | `rpm -qa` | `zypper install` | openSUSE Tumbleweed, Leap, SUSE |
+| **Cross-platform** | `flatpak list --app` | `flatpak install` | All of the above |
 
-Package capture is implemented for pacman and apt. The `apply` engine supports all four for installation, plus Flatpak fallback.
+Arch capture lists only explicitly installed packages. Debian lists manually installed packages. Fedora/RHEL/openSUSE capture all RPM packages (includes dependencies — more thorough but less curated). Flatpak apps are captured alongside native packages on any distro.
+
+Everything else (Void, Gentoo, NixOS, Alpine, Solus) uses package managers outside these families — those are niche and their users are unlikely to need distro-hopping between them and mainstream distros.
 
 ## Cross-Distro Package Mapping
 
@@ -285,6 +303,58 @@ cargo build --release
 # Optional: install to PATH
 sudo cp ./target/release/distropilot /usr/local/bin/
 ```
+
+## Known Limitations
+
+### Desktop Environment (DE) Lock-In
+
+`distropilot` saves **raw `~/.config/` files**. These are DE-specific:
+- KDE → KDE restore works perfectly (Plasma configs, panel layouts, krunner, dolphin)
+- KDE → GNOME: KDE configs are ignored by GNOME; GNOME-specific settings (stored in dconf, not flat files) are NOT captured or restored
+- GNOME → KDE: Same problem in reverse — GNOME uses dconf binary DB, KDE won't read it
+
+**Recommendation:** Use `distropilot` for system-level state (packages, drivers, power, firmware, services). For DE-specific settings, stay within the same desktop environment family, or use each DE's native migration tools alongside (e.g. `dconf dump /` for GNOME, or copy `~/.config/plasma-*` manually).
+
+### SSH Keys — Opt-In
+
+SSH private keys in `~/.ssh/` are **not captured by default**. Use `--include-ssh` to include them:
+
+```bash
+distropilot save --include-ssh /mnt/usb/my-bundle
+```
+
+⚠️ **WARNING:** This copies your private keys into the bundle. Anyone with access to the bundle can use these keys. Store the bundle securely and delete it after use.
+
+### Game Data (Steam, Lutris — NOT Captured)
+
+- **Lutris configs** are in `~/.config/lutris/` — these ARE captured
+- **Lutris game installs** in `~/.local/share/lutris/` are NOT captured (can be 50GB+)
+- **Steam** stores everything in `~/.local/share/Steam/` — NOT captured. Steam games are 50-200GB and impractical to bundle
+- **Steam login** session tokens are in the same dir — not captured
+
+**Recommendation:** Keep your Steam library on a separate drive/partition and symlink it on the new distro. Lutris game libraries need manual migration.
+
+### Browser Sign-Ins & Profiles
+
+- **Firefox** (`~/.mozilla/firefox/`) — captured in `mozilla.tar.zst` (bookmarks, passwords, extensions, login sessions)
+- **Chromium / Chrome / Brave / Vivaldi / Helium** — config in `~/.config/`, captured in `config.tar.zst`
+- **Flatpak-browsers** (`~/.var/app/org.mozilla.firefox/`, etc.) — NOT captured (app data lives outside `~/.config/` and `~/.mozilla/`)
+
+**Note:** Large browser caches will increase bundle size. The tool captures the whole profile directory.
+
+### Spotify & App Logins
+
+- **Spotify** stores login sessions in `~/.config/spotify/` — captured in `config.tar.zst`
+- **Discord, Slack, Telegram** — configs in `~/.config/` — captured
+- **Flatpak apps** — data in `~/.var/app/` — NOT captured
+
+### Flatpak App Data
+
+Flatpak **packages** are now captured (via `flatpak list --app`) and can be reinstalled on the target system. However, app data inside `~/.var/app/` is still not bundled:
+- Flatpak-installed browsers → profiles not captured (use native packages instead)
+- Flatpak Discord, Spotify, etc. → login sessions not captured
+
+For complete Flatpak migration, use `flatpak create-usb` alongside `distropilot`.
 
 ## Architecture
 

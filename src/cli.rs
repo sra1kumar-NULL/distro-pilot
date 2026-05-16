@@ -21,11 +21,17 @@ pub enum Command {
 
 #[derive(clap::Args)]
 pub struct SaveArgs {
-    /// Output path (directory or .tar.zst)
+    /// Output path (directory)
     pub output: String,
     /// Scan only, don't write anything
     #[arg(long)]
     pub dry_run: bool,
+    /// Include SSH keys (~/.ssh/) in bundle (SECURITY: copies private keys to the bundle)
+    #[arg(long)]
+    pub include_ssh: bool,
+    /// Pack bundle as a single .tar.zst file instead of a directory
+    #[arg(long)]
+    pub bundle: bool,
 }
 
 #[derive(clap::Args)]

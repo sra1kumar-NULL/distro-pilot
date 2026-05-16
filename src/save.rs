@@ -8,6 +8,7 @@ use crate::hardware;
 use crate::systemd;
 use crate::distro;
 use crate::cli::SaveArgs;
+use crate::util;
 use anyhow::Result;
 use std::path::Path;
 
@@ -22,14 +23,20 @@ pub fn run(args: SaveArgs) -> Result<()> {
         println!("  Kernel: {}", distro.kernel);
         println!("  Scanning packages...");
         let pkgs = packages::scan_all()?;
-        println!("  Found {} user-installed packages", pkgs.len());
+        println!("  Found {} packages", pkgs.len());
         println!("  Scanning driver configs (modprobe.d, modules-load.d, udev, grub)...");
         println!("  Config dirs to capture: {}", configs::source_dirs().len());
         println!("  Scanning power state...");
         println!("  Scanning firmware...");
         println!("  Scanning dotfiles...");
+        if args.include_ssh {
+            println!("  [--include-ssh] Will include SSH keys");
+        }
         println!("  Scanning systemd services...");
         println!("  Scanning hardware...");
+        if args.bundle {
+            println!("  [--bundle] Will pack as .tar.zst");
+        }
         println!("\nDry-run complete. Re-run without --dry-run to save.");
         return Ok(());
     }
@@ -56,7 +63,7 @@ pub fn run(args: SaveArgs) -> Result<()> {
     power::capture(output)?;
     println!("  ✓ Power state captured");
 
-    dotfiles::capture(output)?;
+    dotfiles::capture(output, args.include_ssh)?;
     println!("  ✓ Dotfiles captured");
 
     systemd::capture(output)?;
@@ -65,6 +72,12 @@ pub fn run(args: SaveArgs) -> Result<()> {
     hardware::capture(output)?;
     println!("  ✓ Hardware profile captured");
 
-    println!("\n✅ Bundle saved to: {}", args.output);
+    if args.bundle {
+        let bundle_path = util::pack_bundle(output)?;
+        println!("\n✅ Bundle saved to: {}", bundle_path.display());
+    } else {
+        println!("\n✅ Bundle saved to: {}", args.output);
+    }
+
     Ok(())
 }
