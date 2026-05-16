@@ -310,22 +310,6 @@ src/
 │   └── mapping.rs       → Cross-distro name resolution
 └── util.rs              → sudo caching, command execution, initramfs/bootloader
 ```
-
-## Roadmap
-
-- [x] System state capture (packages, drivers, power, firmware, dotfiles, systemd, hardware)
-- [x] Cross-distro package mapping (76 apps, 4 distro families + Flatpak)
-- [x] Driver config replay (modprobe, udev, sysctl, GRUB params)
-- [x] Power state replay (ACPI profiles, TLP, thermald)
-- [x] Initramfs rebuild + bootloader update
-- [x] Post-apply validation (sensors, dmesg, GPU driver)
-- [ ] Pre-flight hardware auditor (`distropilot probe` in Live USB)
-- [ ] `--bundle` flag to output/input a single `.tar.zst` file
-- [ ] Community mapping submission workflow
-- [ ] Support for more package managers (dnf scan, zypper scan)
-- [ ] Nix package mapping
-- [ ] Detection of missing firmware blobs
-
 ## License
 
 MIT
