@@ -1,0 +1,534 @@
+{
+  "neovim": {
+    "arch": "neovim",
+    "debian": "neovim",
+    "ubuntu": "neovim",
+    "fedora": "neovim",
+    "flatpak": "io.neovim.nvim"
+  },
+  "discord": {
+    "arch": "discord",
+    "debian": "discord",
+    "ubuntu": "discord",
+    "fedora": "discord",
+    "flatpak": "com.discordapp.Discord"
+  },
+  "firefox": {
+    "arch": "firefox",
+    "debian": "firefox-esr",
+    "ubuntu": "firefox",
+    "fedora": "firefox",
+    "flatpak": "org.mozilla.firefox"
+  },
+  "chromium": {
+    "arch": "chromium",
+    "debian": "chromium",
+    "ubuntu": "chromium-browser",
+    "fedora": "chromium",
+    "flatpak": "org.chromium.Chromium"
+  },
+  "visual-studio-code": {
+    "arch": "visual-studio-code-bin",
+    "debian": "code",
+    "ubuntu": "code",
+    "fedora": "code",
+    "flatpak": "com.visualstudio.code"
+  },
+  "alacritty": {
+    "arch": "alacritty",
+    "debian": "alacritty",
+    "ubuntu": "alacritty",
+    "fedora": "alacritty",
+    "flatpak": "org.alacritty.Alacritty"
+  },
+  "git": {
+    "arch": "git",
+    "debian": "git",
+    "ubuntu": "git",
+    "fedora": "git",
+    "flatpak": ""
+  },
+  "htop": {
+    "arch": "htop",
+    "debian": "htop",
+    "ubuntu": "htop",
+    "fedora": "htop",
+    "flatpak": ""
+  },
+  "btop": {
+    "arch": "btop",
+    "debian": "btop",
+    "ubuntu": "btop",
+    "fedora": "btop",
+    "flatpak": ""
+  },
+  "timeshift": {
+    "arch": "timeshift",
+    "debian": "timeshift",
+    "ubuntu": "timeshift",
+    "fedora": "timeshift",
+    "flatpak": ""
+  },
+  "nvidia-dkms": {
+    "arch": "nvidia-dkms",
+    "debian": "nvidia-kernel-dkms",
+    "ubuntu": "nvidia-kernel-common-535",
+    "fedora": "akmod-nvidia",
+    "flatpak": ""
+  },
+  "pipewire": {
+    "arch": "pipewire",
+    "debian": "pipewire",
+    "ubuntu": "pipewire",
+    "fedora": "pipewire",
+    "flatpak": ""
+  },
+  "wireplumber": {
+    "arch": "wireplumber",
+    "debian": "wireplumber",
+    "ubuntu": "wireplumber",
+    "fedora": "wireplumber",
+    "flatpak": ""
+  },
+  "power-profiles-daemon": {
+    "arch": "power-profiles-daemon",
+    "debian": "power-profiles-daemon",
+    "ubuntu": "power-profiles-daemon",
+    "fedora": "power-profiles-daemon",
+    "flatpak": ""
+  },
+  "tlp": {
+    "arch": "tlp",
+    "debian": "tlp",
+    "ubuntu": "tlp",
+    "fedora": "tlp",
+    "flatpak": ""
+  },
+  "thermald": {
+    "arch": "thermald",
+    "debian": "thermald",
+    "ubuntu": "thermald",
+    "fedora": "thermald",
+    "flatpak": ""
+  },
+  "thunderbird": {
+    "arch": "thunderbird",
+    "debian": "thunderbird",
+    "ubuntu": "thunderbird",
+    "fedora": "thunderbird",
+    "flatpak": "org.mozilla.Thunderbird"
+  },
+  "libreoffice": {
+    "arch": "libreoffice-fresh",
+    "debian": "libreoffice",
+    "ubuntu": "libreoffice",
+    "fedora": "libreoffice",
+    "flatpak": "org.libreoffice.LibreOffice"
+  },
+  "steam": {
+    "arch": "steam",
+    "debian": "steam-installer",
+    "ubuntu": "steam-installer",
+    "fedora": "steam",
+    "flatpak": "com.valvesoftware.Steam"
+  },
+  "gimp": {
+    "arch": "gimp",
+    "debian": "gimp",
+    "ubuntu": "gimp",
+    "fedora": "gimp",
+    "flatpak": "org.gimp.GIMP"
+  },
+  "obs-studio": {
+    "arch": "obs-studio",
+    "debian": "obs-studio",
+    "ubuntu": "obs-studio",
+    "fedora": "obs-studio",
+    "flatpak": "com.obsproject.Studio"
+  },
+  "vlc": {
+    "arch": "vlc",
+    "debian": "vlc",
+    "ubuntu": "vlc",
+    "fedora": "vlc",
+    "flatpak": "org.videolan.VLC"
+  },
+  "mpv": {
+    "arch": "mpv",
+    "debian": "mpv",
+    "ubuntu": "mpv",
+    "fedora": "mpv",
+    "flatpak": "io.mpv.Mpv"
+  },
+  "keepassxc": {
+    "arch": "keepassxc",
+    "debian": "keepassxc",
+    "ubuntu": "keepassxc",
+    "fedora": "keepassxc",
+    "flatpak": "org.keepassxc.KeePassXC"
+  },
+  "virt-manager": {
+    "arch": "virt-manager",
+    "debian": "virt-manager",
+    "ubuntu": "virt-manager",
+    "fedora": "virt-manager",
+    "flatpak": ""
+  },
+  "docker": {
+    "arch": "docker",
+    "debian": "docker-ce",
+    "ubuntu": "docker-ce",
+    "fedora": "docker-ce",
+    "flatpak": ""
+  },
+  "nodejs": {
+    "arch": "nodejs",
+    "debian": "nodejs",
+    "ubuntu": "nodejs",
+    "fedora": "nodejs",
+    "flatpak": ""
+  },
+  "python": {
+    "arch": "python",
+    "debian": "python3",
+    "ubuntu": "python3",
+    "fedora": "python3",
+    "flatpak": ""
+  },
+  "go": {
+    "arch": "go",
+    "debian": "golang",
+    "ubuntu": "golang",
+    "fedora": "golang",
+    "flatpak": ""
+  },
+  "rust": {
+    "arch": "rust",
+    "debian": "rustc",
+    "ubuntu": "rustc",
+    "fedora": "rust",
+    "flatpak": ""
+  },
+  "terminator": {
+    "arch": "terminator",
+    "debian": "terminator",
+    "ubuntu": "terminator",
+    "fedora": "terminator",
+    "flatpak": ""
+  },
+  "kitty": {
+    "arch": "kitty",
+    "debian": "kitty",
+    "ubuntu": "kitty",
+    "fedora": "kitty",
+    "flatpak": "io.wez.kitty"
+  },
+  "tmux": {
+    "arch": "tmux",
+    "debian": "tmux",
+    "ubuntu": "tmux",
+    "fedora": "tmux",
+    "flatpak": ""
+  },
+  "zsh": {
+    "arch": "zsh",
+    "debian": "zsh",
+    "ubuntu": "zsh",
+    "fedora": "zsh",
+    "flatpak": ""
+  },
+  "fish": {
+    "arch": "fish",
+    "debian": "fish",
+    "ubuntu": "fish",
+    "fedora": "fish",
+    "flatpak": ""
+  },
+  "fastfetch": {
+    "arch": "fastfetch",
+    "debian": "fastfetch",
+    "ubuntu": "fastfetch",
+    "fedora": "fastfetch",
+    "flatpak": ""
+  },
+  "clamav": {
+    "arch": "clamav",
+    "debian": "clamav",
+    "ubuntu": "clamav",
+    "fedora": "clamav",
+    "flatpak": ""
+  },
+  "syncthing": {
+    "arch": "syncthing",
+    "debian": "syncthing",
+    "ubuntu": "syncthing",
+    "fedora": "syncthing",
+    "flatpak": ""
+  },
+  "cups": {
+    "arch": "cups",
+    "debian": "cups",
+    "ubuntu": "cups",
+    "fedora": "cups",
+    "flatpak": ""
+  },
+  "avahi": {
+    "arch": "avahi",
+    "debian": "avahi-daemon",
+    "ubuntu": "avahi-daemon",
+    "fedora": "avahi",
+    "flatpak": ""
+  },
+  "NetworkManager": {
+    "arch": "networkmanager",
+    "debian": "network-manager",
+    "ubuntu": "network-manager",
+    "fedora": "NetworkManager",
+    "flatpak": ""
+  },
+  "bluetooth": {
+    "arch": "bluez",
+    "debian": "bluez",
+    "ubuntu": "bluez",
+    "fedora": "bluez",
+    "flatpak": ""
+  },
+  "intel-undervolt": {
+    "arch": "intel-undervolt",
+    "debian": "intel-undervolt",
+    "ubuntu": "intel-undervolt",
+    "fedora": "intel-undervolt",
+    "flatpak": ""
+  },
+  "gamemode": {
+    "arch": "gamemode",
+    "debian": "gamemode",
+    "ubuntu": "gamemode",
+    "fedora": "gamemode",
+    "flatpak": "com.fightcade.GameMode"
+  },
+  "mangohud": {
+    "arch": "mangohud",
+    "debian": "mangohud",
+    "ubuntu": "mangohud",
+    "fedora": "mangohud",
+    "flatpak": "org.freedesktop.Platform.VulkanLayer.MangoHud"
+  },
+  "winetricks": {
+    "arch": "winetricks",
+    "debian": "winetricks",
+    "ubuntu": "winetricks",
+    "fedora": "winetricks",
+    "flatpak": ""
+  },
+  "wine": {
+    "arch": "wine",
+    "debian": "wine",
+    "ubuntu": "wine",
+    "fedora": "wine",
+    "flatpak": "org.winehq.Wine"
+  },
+  "lutris": {
+    "arch": "lutris",
+    "debian": "lutris",
+    "ubuntu": "lutris",
+    "fedora": "lutris",
+    "flatpak": "net.lutris.Lutris"
+  },
+  "heroic-games-launcher": {
+    "arch": "heroic-games-launcher-bin",
+    "debian": "heroic-games-launcher",
+    "ubuntu": "heroic-games-launcher",
+    "fedora": "heroic-games-launcher",
+    "flatpak": "com.heroicgameslauncher.hgl"
+  },
+  "prismlauncher": {
+    "arch": "prismlauncher",
+    "debian": "prismlauncher",
+    "ubuntu": "prismlauncher",
+    "fedora": "prismlauncher",
+    "flatpak": "org.prismlauncher.PrismLauncher"
+  },
+  "spotify": {
+    "arch": "spotify",
+    "debian": "spotify-client",
+    "ubuntu": "spotify-client",
+    "fedora": "spotify-client",
+    "flatpak": "com.spotify.Client"
+  },
+  "telegram-desktop": {
+    "arch": "telegram-desktop",
+    "debian": "telegram-desktop",
+    "ubuntu": "telegram-desktop",
+    "fedora": "telegram-desktop",
+    "flatpak": "org.telegram.desktop"
+  },
+  "signal-desktop": {
+    "arch": "signal-desktop",
+    "debian": "signal-desktop",
+    "ubuntu": "signal-desktop",
+    "fedora": "signal-desktop",
+    "flatpak": "org.signal.Signal"
+  },
+  "slack": {
+    "arch": "slack-desktop",
+    "debian": "slack-desktop",
+    "ubuntu": "slack-desktop",
+    "fedora": "slack",
+    "flatpak": "com.slack.Slack"
+  },
+  "zoom": {
+    "arch": "zoom",
+    "debian": "zoom",
+    "ubuntu": "zoom",
+    "fedora": "zoom",
+    "flatpak": "us.zoom.Zoom"
+  },
+  "anydesk": {
+    "arch": "anydesk-bin",
+    "debian": "anydesk",
+    "ubuntu": "anydesk",
+    "fedora": "anydesk",
+    "flatpak": ""
+  },
+  "teamviewer": {
+    "arch": "teamviewer",
+    "debian": "teamviewer",
+    "ubuntu": "teamviewer",
+    "fedora": "teamviewer",
+    "flatpak": ""
+  },
+  "filezilla": {
+    "arch": "filezilla",
+    "debian": "filezilla",
+    "ubuntu": "filezilla",
+    "fedora": "filezilla",
+    "flatpak": "org.filezillaproject.Filezilla"
+  },
+  "deluge": {
+    "arch": "deluge",
+    "debian": "deluge",
+    "ubuntu": "deluge",
+    "fedora": "deluge",
+    "flatpak": "org.deluge_torrent.deluge"
+  },
+  "qbittorrent": {
+    "arch": "qbittorrent",
+    "debian": "qbittorrent",
+    "ubuntu": "qbittorrent",
+    "fedora": "qbittorrent",
+    "flatpak": "org.qbittorrent.qBittorrent"
+  },
+  "calibre": {
+    "arch": "calibre",
+    "debian": "calibre",
+    "ubuntu": "calibre",
+    "fedora": "calibre",
+    "flatpak": "com.calibre_ebook.calibre"
+  },
+  "handbrake": {
+    "arch": "handbrake",
+    "debian": "handbrake",
+    "ubuntu": "handbrake",
+    "fedora": "handbrake",
+    "flatpak": "fr.handbrake.ghb"
+  },
+  "kdenlive": {
+    "arch": "kdenlive",
+    "debian": "kdenlive",
+    "ubuntu": "kdenlive",
+    "fedora": "kdenlive",
+    "flatpak": "org.kde.kdenlive"
+  },
+  "inkscape": {
+    "arch": "inkscape",
+    "debian": "inkscape",
+    "ubuntu": "inkscape",
+    "fedora": "inkscape",
+    "flatpak": "org.inkscape.Inkscape"
+  },
+  "blender": {
+    "arch": "blender",
+    "debian": "blender",
+    "ubuntu": "blender",
+    "fedora": "blender",
+    "flatpak": "org.blender.Blender"
+  },
+  "docker-compose": {
+    "arch": "docker-compose",
+    "debian": "docker-compose-plugin",
+    "ubuntu": "docker-compose-plugin",
+    "fedora": "docker-compose",
+    "flatpak": ""
+  },
+  "podman": {
+    "arch": "podman",
+    "debian": "podman",
+    "ubuntu": "podman",
+    "fedora": "podman",
+    "flatpak": ""
+  },
+  "kubectl": {
+    "arch": "kubectl",
+    "debian": "kubectl",
+    "ubuntu": "kubectl",
+    "fedora": "kubectl",
+    "flatpak": ""
+  },
+  "minikube": {
+    "arch": "minikube",
+    "debian": "minikube",
+    "ubuntu": "minikube",
+    "fedora": "minikube",
+    "flatpak": ""
+  },
+  "gh": {
+    "arch": "github-cli",
+    "debian": "gh",
+    "ubuntu": "gh",
+    "fedora": "gh",
+    "flatpak": ""
+  },
+  "jq": {
+    "arch": "jq",
+    "debian": "jq",
+    "ubuntu": "jq",
+    "fedora": "jq",
+    "flatpak": ""
+  },
+  "yq": {
+    "arch": "yq",
+    "debian": "yq",
+    "ubuntu": "yq",
+    "fedora": "yq",
+    "flatpak": ""
+  },
+  "ripgrep": {
+    "arch": "ripgrep",
+    "debian": "ripgrep",
+    "ubuntu": "ripgrep",
+    "fedora": "ripgrep",
+    "flatpak": ""
+  },
+  "fd": {
+    "arch": "fd",
+    "debian": "fd-find",
+    "ubuntu": "fd-find",
+    "fedora": "fd-find",
+    "flatpak": ""
+  },
+  "fzf": {
+    "arch": "fzf",
+    "debian": "fzf",
+    "ubuntu": "fzf",
+    "fedora": "fzf",
+    "flatpak": ""
+  },
+  "lazygit": {
+    "arch": "lazygit",
+    "debian": "lazygit",
+    "ubuntu": "lazygit",
+    "fedora": "lazygit",
+    "flatpak": ""
+  }
+}
