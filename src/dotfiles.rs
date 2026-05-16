@@ -1,0 +1,81 @@
+use anyhow::Result;
+use std::path::Path;
+
+fn archive_dir(dir: &Path, archive_path: &Path) -> Result<()> {
+    let file = std::fs::File::create(archive_path)?;
+    let enc = zstd::Encoder::new(file, 3)?;
+    let mut archive = tar::Builder::new(enc);
+
+    for entry in walkdir::WalkDir::new(dir).follow_links(false).into_iter().filter_map(|e| e.ok()) {
+        if !entry.file_type().is_file() && !entry.file_type().is_symlink() {
+            continue;
+        }
+        let relative = entry.path().strip_prefix(dir).unwrap_or(entry.path());
+        if let Ok(mut f) = std::fs::File::open(entry.path()) {
+            let _ = archive.append_file(relative, &mut f);
+        }
+    }
+
+    let _ = archive.finish()?;
+    Ok(())
+}
+
+pub fn capture(output: &Path) -> Result<()> {
+    let dest = output.join("dotfiles");
+    std::fs::create_dir_all(&dest)?;
+
+    // ~/.config
+    if let Some(config_dir) = dirs::config_dir() {
+        if config_dir.exists() {
+            archive_dir(&config_dir, &dest.join("config.tar.zst"))?;
+        }
+    }
+
+    // Home dotfiles (.bashrc, .zshrc, .profile, .gitconfig, .tmux.conf, .xinitrc)
+    if let Some(home) = dirs::home_dir() {
+        if home.exists() {
+            let file = std::fs::File::create(dest.join("home.tar.zst"))?;
+            let enc = zstd::Encoder::new(file, 3)?;
+            let mut archive = tar::Builder::new(enc);
+            for dotfile in [".bashrc", ".zshrc", ".profile", ".gitconfig", ".tmux.conf", ".xinitrc"] {
+                let path = home.join(dotfile);
+                if path.exists() {
+                    if let Ok(mut f) = std::fs::File::open(&path) {
+                        let _ = archive.append_file(dotfile, &mut f);
+                    }
+                }
+            }
+            let _ = archive.finish()?;
+        }
+    }
+
+    Ok(())
+}
+
+pub fn apply(bundle_path: &Path, dry_run: bool) -> Result<()> {
+    let src = bundle_path.join("dotfiles");
+    if !src.exists() {
+        println!("  No dotfiles in bundle, skipping");
+        return Ok(());
+    }
+
+    let home = dirs::home_dir()
+        .ok_or_else(|| anyhow::anyhow!("Cannot find home directory"))?;
+
+    for archive_name in ["config.tar.zst", "home.tar.zst"] {
+        let archive_path = src.join(archive_name);
+        if archive_path.exists() {
+            if dry_run {
+                println!("  [dry-run] Would extract: {}", archive_name);
+            } else {
+                let file = std::fs::File::open(&archive_path)?;
+                let dec = zstd::Decoder::new(file)?;
+                let mut archive = tar::Archive::new(dec);
+                archive.unpack(&home)?;
+                println!("  ✓ Restored: {}", archive_name);
+            }
+        }
+    }
+
+    Ok(())
+}
