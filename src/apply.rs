@@ -6,6 +6,9 @@ use crate::firmware;
 use crate::power;
 use crate::systemd;
 use crate::hardware;
+use crate::network;
+use crate::audio;
+use crate::display;
 use crate::distro;
 use crate::cli::ApplyArgs;
 use crate::util;
@@ -80,6 +83,21 @@ pub fn run(args: ApplyArgs) -> Result<()> {
     if do_all || args.step == "systemd" {
         println!("\n── Systemd ──");
         systemd::apply(&bundle_path, args.dry_run)?;
+    }
+
+    if do_all || args.step == "network" {
+        println!("\n── Network ──");
+        network::apply(&bundle_path, args.dry_run)?;
+    }
+
+    if do_all || args.step == "audio" {
+        println!("\n── Audio ──");
+        audio::apply(&bundle_path, args.dry_run)?;
+    }
+
+    if do_all || args.step == "display" {
+        println!("\n── Display ──");
+        display::apply(&bundle_path, args.dry_run)?;
     }
 
     if !args.no_validate && (do_all || args.step != "dotfiles") {

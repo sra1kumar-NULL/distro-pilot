@@ -11,6 +11,9 @@ mod systemd;
 mod distro;
 mod hardware;
 mod util;
+mod network;
+mod audio;
+mod display;
 
 use clap::Parser;
 

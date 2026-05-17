@@ -6,6 +6,9 @@ use crate::firmware;
 use crate::power;
 use crate::hardware;
 use crate::systemd;
+use crate::network;
+use crate::audio;
+use crate::display;
 use crate::distro;
 use crate::cli::SaveArgs;
 use crate::util;
@@ -34,6 +37,9 @@ pub fn run(args: SaveArgs) -> Result<()> {
         }
         println!("  Scanning systemd services...");
         println!("  Scanning hardware...");
+        println!("  Scanning network config (NetworkManager connections)...");
+        println!("  Scanning audio config (PipeWire, WirePlumber, ALSA)...");
+        println!("  Scanning display config (monitor layout)...");
         if args.bundle {
             println!("  [--bundle] Will pack as .tar.zst");
         }
@@ -71,6 +77,15 @@ pub fn run(args: SaveArgs) -> Result<()> {
 
     hardware::capture(output)?;
     println!("  ✓ Hardware profile captured");
+
+    network::capture(output)?;
+    println!("  ✓ Network config captured");
+
+    audio::capture(output)?;
+    println!("  ✓ Audio config captured");
+
+    display::capture(output)?;
+    println!("  ✓ Display config captured");
 
     if args.bundle {
         let bundle_path = util::pack_bundle(output)?;

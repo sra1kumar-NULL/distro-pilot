@@ -38,7 +38,7 @@ pub struct SaveArgs {
 pub struct ApplyArgs {
     /// Path to the bundle
     pub bundle: String,
-    /// Which step(s) to run: packages, drivers, dotfiles, systemd, all
+    /// Which step(s) to run: packages, drivers, firmware, power, audio, display, dotfiles, systemd, network, all
     #[arg(long, default_value = "all")]
     pub step: String,
     /// Show what would change without applying
