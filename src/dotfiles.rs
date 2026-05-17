@@ -1,7 +1,17 @@
 use anyhow::Result;
 use std::path::Path;
 
-fn archive_dir(dir: &Path, archive_path: &Path) -> Result<()> {
+fn should_exclude(relative_path: &Path, excludes: &[String]) -> bool {
+    let path_str = relative_path.to_string_lossy();
+    for pattern in excludes {
+        if path_str.contains(pattern.as_str()) {
+            return true;
+        }
+    }
+    false
+}
+
+fn archive_dir(dir: &Path, archive_path: &Path, excludes: &[String]) -> Result<()> {
     let file = std::fs::File::create(archive_path)?;
     let enc = zstd::Encoder::new(file, 3)?;
     let mut archive = tar::Builder::new(enc);
@@ -11,6 +21,9 @@ fn archive_dir(dir: &Path, archive_path: &Path) -> Result<()> {
             continue;
         }
         let relative = entry.path().strip_prefix(dir).unwrap_or(entry.path());
+        if should_exclude(relative, excludes) {
+            continue;
+        }
         if let Ok(mut f) = std::fs::File::open(entry.path()) {
             let _ = archive.append_file(relative, &mut f);
         }
@@ -20,7 +33,7 @@ fn archive_dir(dir: &Path, archive_path: &Path) -> Result<()> {
     Ok(())
 }
 
-pub fn capture(output: &Path, include_ssh: bool) -> Result<()> {
+pub fn capture(output: &Path, include_ssh: bool, excludes: &[String]) -> Result<()> {
     let dest = output.join("dotfiles");
     std::fs::create_dir_all(&dest)?;
     let home = dirs::home_dir();
@@ -28,7 +41,7 @@ pub fn capture(output: &Path, include_ssh: bool) -> Result<()> {
     // ~/.config (covers Chromium, Brave, Spotify, VS Code, alacritty, etc.)
     if let Some(config_dir) = dirs::config_dir() {
         if config_dir.exists() {
-            archive_dir(&config_dir, &dest.join("config.tar.zst"))?;
+            archive_dir(&config_dir, &dest.join("config.tar.zst"), excludes)?;
         }
     }
 
@@ -42,7 +55,9 @@ pub fn capture(output: &Path, include_ssh: bool) -> Result<()> {
                 let path = home.join(dotfile);
                 if path.exists() {
                     if let Ok(mut f) = std::fs::File::open(&path) {
-                        let _ = archive.append_file(dotfile, &mut f);
+                        if !should_exclude(Path::new(dotfile), excludes) {
+                            let _ = archive.append_file(dotfile, &mut f);
+                        }
                     }
                 }
             }
@@ -54,7 +69,7 @@ pub fn capture(output: &Path, include_ssh: bool) -> Result<()> {
     if let Some(ref home) = home {
         let mozilla = home.join(".mozilla");
         if mozilla.exists() {
-            archive_dir(&mozilla, &dest.join("mozilla.tar.zst"))?;
+            archive_dir(&mozilla, &dest.join("mozilla.tar.zst"), excludes)?;
         }
     }
 
@@ -65,7 +80,7 @@ pub fn capture(output: &Path, include_ssh: bool) -> Result<()> {
             if ssh.exists() {
                 eprintln!("  ⚠  WARNING: Including SSH private keys in the bundle ({})", ssh.display());
                 eprintln!("  ⚠  This bundle must be stored securely. Anyone with access can use these keys.");
-                archive_dir(&ssh, &dest.join("ssh.tar.zst"))?;
+                archive_dir(&ssh, &dest.join("ssh.tar.zst"), excludes)?;
             }
         }
     }

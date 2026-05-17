@@ -51,6 +51,11 @@ pub fn run(args: ApplyArgs) -> Result<()> {
 
     let do_all = args.step == "all";
 
+    if do_all || args.step == "network" {
+        println!("\n── Network ──");
+        network::apply(&bundle_path, args.dry_run)?;
+    }
+
     if do_all || args.step == "packages" {
         println!("\n── Packages ──");
         let pkgs = packages::read_manifest(&bundle_path)?;
@@ -83,11 +88,6 @@ pub fn run(args: ApplyArgs) -> Result<()> {
     if do_all || args.step == "systemd" {
         println!("\n── Systemd ──");
         systemd::apply(&bundle_path, args.dry_run)?;
-    }
-
-    if do_all || args.step == "network" {
-        println!("\n── Network ──");
-        network::apply(&bundle_path, args.dry_run)?;
     }
 
     if do_all || args.step == "audio" {

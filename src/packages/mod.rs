@@ -30,7 +30,7 @@ pub fn scan_all() -> Result<Vec<PackageEntry>> {
     let mut pkgs = match pm.as_str() {
         "pacman" => pacman::list_explicit()?,
         "apt" => apt::list_manual()?,
-        "dnf" | "zypper" => rpm::list_all()?,
+        "dnf" | "zypper" => rpm::list_all(&pm)?,
         _ => anyhow::bail!("Unsupported package manager: {}", pm),
     };
 

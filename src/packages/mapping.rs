@@ -85,12 +85,107 @@ pub fn lookup(app_name: &str, from: &str, to: &str) -> Result<MappingResult> {
     })
 }
 
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_lookup_firefox_arch_to_debian() {
+        let result = lookup("firefox", "arch", "debian").unwrap();
+        assert_eq!(result.app_name, "firefox");
+        assert!(result.target.iter().any(|t| t.name == "firefox-esr"));
+        assert!(result.target.iter().any(|t| t.pm == "debian"));
+    }
+
+    #[test]
+    fn test_lookup_arch_to_arch() {
+        let result = lookup("firefox", "arch", "arch").unwrap();
+        let top = &result.target[0];
+        assert_eq!(top.name, "firefox");
+        assert_eq!(top.pm, "arch");
+    }
+
+    #[test]
+    fn test_lookup_fallback_to_flatpak() {
+        let result = lookup("slack", "arch", "debian").unwrap();
+        assert!(result.target.iter().any(|t| t.pm == "flatpak"));
+    }
+
+    #[test]
+    fn test_lookup_unknown_package() {
+        let result = lookup("this-package-definitely-does-not-exist-42", "arch", "debian");
+        assert!(result.is_err());
+    }
+
+    #[test]
+    fn test_pm_for_distro() {
+        assert_eq!(pm_for_distro("arch"), Some("pacman"));
+        assert_eq!(pm_for_distro("debian"), Some("apt"));
+        assert_eq!(pm_for_distro("fedora"), Some("dnf"));
+        assert_eq!(pm_for_distro("opensuse"), Some("zypper"));
+        assert_eq!(pm_for_distro("unknown"), None);
+    }
+
+    #[test]
+    fn test_same_pm_family() {
+        assert!(same_pm_family("arch", "cachyos"));
+        assert!(same_pm_family("fedora", "rhel"));
+        assert!(same_pm_family("debian", "ubuntu"));
+    }
+
+    #[test]
+    fn test_different_pm_family() {
+        assert!(!same_pm_family("arch", "debian"));
+        assert!(!same_pm_family("fedora", "ubuntu"));
+    }
+
+    #[test]
+    fn test_map_all_same_family_fallback() {
+        let pkgs = vec![
+            PackageEntry {
+                app_name: "firefox".to_string(),
+                native_name: "firefox".to_string(),
+                pm: "pacman".to_string(),
+                category: "unknown".to_string(),
+            },
+            PackageEntry {
+                app_name: "some-obscure-tool".to_string(),
+                native_name: "some-obscure-tool".to_string(),
+                pm: "pacman".to_string(),
+                category: "unknown".to_string(),
+            },
+        ];
+        // arch -> cachyos (same pacman family): obscure tool passes through
+        let results = map_all(&pkgs, "arch", "cachyos").unwrap();
+        assert_eq!(results.len(), 2);
+        let obscure = results.iter().find(|r| r.app_name == "some-obscure-tool").unwrap();
+        assert_eq!(obscure.target[0].name, "some-obscure-tool");
+        assert_eq!(obscure.target[0].pm, "pacman");
+        // firefox should have proper mapping
+        let ff = results.iter().find(|r| r.app_name == "firefox").unwrap();
+        assert!(!ff.target.is_empty());
+    }
+}
+
+fn pm_for_distro(distro_id: &str) -> Option<&'static str> {
+    match distro_id {
+        "arch" | "manjaro" | "cachyos" | "endeavouros" => Some("pacman"),
+        "debian" | "ubuntu" | "linuxmint" | "pop" => Some("apt"),
+        "fedora" | "rhel" | "centos" | "rocky" | "alma" => Some("dnf"),
+        "opensuse" | "suse" | "opensuse-tumbleweed" | "opensuse-leap" => Some("zypper"),
+        _ => None,
+    }
+}
+
+fn same_pm_family(from: &str, to: &str) -> bool {
+    pm_for_distro(from) == pm_for_distro(to) && pm_for_distro(from).is_some()
+}
+
 /// Map all packages in a manifest from source distro to target distro
 pub fn map_all(pkgs: &[PackageEntry], from: &str, to: &str) -> Result<Vec<MappingResult>> {
     let mut results = Vec::new();
     for pkg in pkgs {
         if pkg.pm == "flatpak" {
-            // Flatpak entries are already the canonical install ID; pass through directly
             results.push(MappingResult {
                 app_name: pkg.app_name.clone(),
                 source: format!("flatpak:{}", pkg.native_name),
@@ -104,6 +199,18 @@ pub fn map_all(pkgs: &[PackageEntry], from: &str, to: &str) -> Result<Vec<Mappin
         }
         match lookup(&pkg.app_name, from, to) {
             Ok(r) => results.push(r),
+            Err(_) if same_pm_family(from, to) => {
+                let pm = pm_for_distro(to).unwrap_or("apt");
+                results.push(MappingResult {
+                    app_name: pkg.app_name.clone(),
+                    source: format!("{}:{}", from, pkg.native_name),
+                    target: vec![TargetPackage {
+                        pm: pm.to_string(),
+                        name: pkg.native_name.clone(),
+                        priority: 1,
+                    }],
+                });
+            }
             Err(e) => eprintln!("  ⚠  {} — skipping", e),
         }
     }

@@ -38,7 +38,7 @@ pub fn apply(bundle_path: &Path, dry_run: bool) -> Result<()> {
             }
         } else {
             for svc in &system_services {
-                match crate::util::sudo_cmd(&format!("systemctl enable {} 2>/dev/null", svc)) {
+                match crate::util::sudo_cmd(&format!("systemctl enable --now {} 2>/dev/null", svc)) {
                     Ok(_) => println!("  ✓ Enabled system service: {}", svc),
                     Err(_) => println!("  ⚠  Could not enable {} (may not exist on this distro)", svc),
                 }
@@ -58,7 +58,7 @@ pub fn apply(bundle_path: &Path, dry_run: bool) -> Result<()> {
         } else {
             for svc in &user_services {
                 match std::process::Command::new("systemctl")
-                    .args(["--user", "enable", svc])
+                    .args(["--user", "enable", "--now", svc])
                     .status()
                 {
                     Ok(_) => println!("  ✓ Enabled user service: {}", svc),

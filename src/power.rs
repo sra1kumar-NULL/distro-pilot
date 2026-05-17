@@ -65,8 +65,9 @@ pub fn apply(bundle_path: &Path, dry_run: bool) -> Result<()> {
             if dry_run {
                 println!("  [dry-run] Would set ACPI platform profile to: {}", val.trim());
             } else {
-                std::fs::write(target, val.trim())?;
-                println!("  ✓ ACPI platform profile set to: {}", val.trim());
+                let val_trimmed = val.trim();
+                crate::util::sudo_cmd(&format!("echo '{}' > /sys/firmware/acpi/platform_profile", val_trimmed))?;
+                println!("  ✓ ACPI platform profile set to: {}", val_trimmed);
             }
         } else {
             println!("  ⚠  /sys/firmware/acpi/platform_profile not available on this kernel");

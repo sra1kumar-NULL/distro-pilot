@@ -32,6 +32,11 @@ pub fn run(args: SaveArgs) -> Result<()> {
         println!("  Scanning power state...");
         println!("  Scanning firmware...");
         println!("  Scanning dotfiles...");
+        if !args.exclude.is_empty() {
+            for ex in &args.exclude {
+                println!("  [--exclude] Skipping paths containing: {}", ex);
+            }
+        }
         if args.include_ssh {
             println!("  [--include-ssh] Will include SSH keys");
         }
@@ -69,7 +74,7 @@ pub fn run(args: SaveArgs) -> Result<()> {
     power::capture(output)?;
     println!("  ✓ Power state captured");
 
-    dotfiles::capture(output, args.include_ssh)?;
+    dotfiles::capture(output, args.include_ssh, &args.exclude)?;
     println!("  ✓ Dotfiles captured");
 
     systemd::capture(output)?;

@@ -29,6 +29,9 @@ pub struct SaveArgs {
     /// Include SSH keys (~/.ssh/) in bundle (SECURITY: copies private keys to the bundle)
     #[arg(long)]
     pub include_ssh: bool,
+    /// Exclude paths containing this substring (repeatable, e.g. --exclude Steam --exclude .cache)
+    #[arg(long)]
+    pub exclude: Vec<String>,
     /// Pack bundle as a single .tar.zst file instead of a directory
     #[arg(long)]
     pub bundle: bool,
